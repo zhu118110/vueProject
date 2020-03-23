@@ -35,8 +35,8 @@ export default {
 			DailyVisit:{
 				xData:["2020-2-14","2020-2-15","2020-2-16"], //x轴显示的日期
 				readSum:[10,15,20],
-			}
-						
+			},
+			amount:0,			
         }
     },
 	created() {
@@ -156,7 +156,7 @@ export default {
 					today:today
 				}})
 				.then(res=>{
-					console.log(this.DailyVisit.xData)
+					
 					if(res.data){
 						let todayDate=this.szqc2(res.data);
 						 for( let i in todayDate ){
@@ -165,7 +165,6 @@ export default {
 							 this.DailyVisit.readSum.push(todayDate[i].readSum)
 							 this.visitLine(this.DailyVisit.xData,this.DailyVisit.readSum)
 						 }
-						//  console.log(this.DailyVisit.xData)
 					}
 
 				})
@@ -175,12 +174,23 @@ export default {
 
 			// 每日查看数量的折线图
 			visitLine:function(xDate,serieDate){
+				let sum=0;
+				for(let i in serieDate){
+					sum+=serieDate[i]
+				}
 				this.lines=echarts.init(document.getElementById("DailyVisits"));
 				this.lines.setOption({
 					title:{
 						text:"每日查看的数量",
-						left: 'center'
+						left: 'center',
+						subtext:"总浏览"+sum+"次",
+						// 副标题的样式
+						subtextStyle:{
+							fontSize:12,
+							textStyle:'middle'
+						}
 					},
+					
 					tooltip: {
 						trigger: 'item',
 						alwaysShowContent:true,
@@ -201,11 +211,12 @@ export default {
 						}
 					}],
 					yAxis:{
-						type:'value'
+						type:'value',
+						
 					},
 					series:[{
 						type:'line',
-						
+						// name:"",
 						data:serieDate,
 						itemStyle:{ 
 							normal:{ 

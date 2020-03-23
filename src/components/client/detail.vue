@@ -94,7 +94,6 @@ export default{
 		return{
 			pageSize:5,
 			currentPage:1,
-
 			id:'',   //文章id，通过路由传递过来
 			url:"http://127.0.0.1:3000",    //后台网址
 			articles:[],   //文章详细信息,通过文字id查找得到

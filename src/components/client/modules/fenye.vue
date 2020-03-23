@@ -29,7 +29,9 @@ export default {
         }
     },
     created () {
-        this.defaultPageNum=this.$props.defaultPageSize
+        this.defaultPageNum=this.$props.defaultPageSize;
+        this.pageSizes[0]=this.defaultPageNum*2;
+        this.pageSizes[1]=this.defaultPageNum*3;
     },
     mounted () {
         this.send()

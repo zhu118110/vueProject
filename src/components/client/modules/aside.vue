@@ -3,10 +3,10 @@
             <div class="seach">
                 <div>
                     <input type="text" placeholder="输入标题关键字"  v-model="searchMsg" @blur="searchBlur()">
-                    <button @click="searchBlur()">搜索</button>
+                    <button @click="searchBtn()">搜索</button>
                 </div>
                 <ul v-show="search_keydown">
-                    <li v-for="(item,index) in searchResult" @click="selectSingle()">
+                    <li v-for="(item,index) in searchResult" ref="liRef" @mouseout="selectOut()" @mouseover="selectOver()"  @click="selectLi(index)">
                         {{item.title}}
                     </li>
                 </ul>
@@ -18,9 +18,9 @@
                     <dd v-if="!zanwu" class="zanwu">
                         <span>暂无文章!</span>
                     </dd>
-                    <dd v-for="(hotItem,index) in hotArticle" @click="getId(hotArticle,index)" >
+                    <dd v-for="(hotItem,index) in hotArticle" @click="getId(hotArticle,index)">
                         <span>[{{index+1}}]</span>
-                        <a :title="hotItem.title" >{{hotItem.title}}</a>
+                        <a :title="hotItem.title" :class="{'changeColor':col==index}">{{hotItem.title}}</a>
                     </dd>
                    
                 </dl>
@@ -29,7 +29,7 @@
                 <dl>
                     <dt>最近更新</dt>
 
-                    <dd v-for="(near,index) in nearest">
+                    <dd v-for="(near,index) in nearest" @click="getId(nearest,index)">
                         <span>[{{index+1}}]</span>
                         <a :title="near.title" >{{near.title}}</a>
                     </dd>
@@ -54,6 +54,8 @@ export default{
             searchMsg:"",
             searchResult:[],
             search_keydown:false,
+            liRef:false,
+            col:0,
         }
     },
     created () {
@@ -107,6 +109,8 @@ export default{
 
         // 点击文章标题跳转至文章详情页,路由传递的参数是文章的id
 		getId(arr,index){
+           
+            this.col=index;
 			this.$router.push({
 				path:"/detail",
 				query:{
@@ -116,28 +120,48 @@ export default{
           
         },
 
-        // 1.搜索框失去焦点后让搜索结果隐藏，并将搜索到的内容存到vuex中
+        // 1.搜索框失去焦点后让搜索结果隐藏
         searchBlur(){
-            this.search_keydown=false;
-            
-             if(this.searchMsg==""){
-                
+            console.log(this.searchMsg,this.liRef)
+            // 如果搜索字段为空或者鼠标没有放在搜索列表(li)时,搜索列表隐藏,跳转至首页
+            if(this.searchMsg==""&&this.liRef==false){
+                this.search_keydown=false;
                 this.$router.push({
                     path:"/index"
                 })
                return false;
             }
-            this.$store.dispatch("toGetSearch",this.searchResult)
-            .then(()=>{
-               
+        },
+        // 点击搜索里边中的单个搜索数据
+        selectLi(i){
+            // 如果鼠标放在搜索列表上时,根据点击的结果的下标存入vuex,
+            if(this.$refs.liRef[0].tagName=="LI"){
+                this.liRef=true;
+                this.$store.dispatch("toGetSearch",this.searchResult[i]);
+                this.search_keydown=false;
                 this.$router.push({
                     path:"/search"
                 })
-            })
-           
-        },
 
-        
+            }
+        },
+        // 鼠标滑动到搜索列表上
+        selectOver(){
+            this.liRef=true;
+        },
+        // 鼠标离开搜索列表上
+        selectOut(){
+            this.liRef=false
+        },
+        searchBtn(){
+            if(this.searchMsg!==""){
+                this.$store.dispatch("toGetSearch",this.searchResult);
+                this.search_keydown=false;
+                this.$router.push({
+                    path:"/search"
+                })
+            }
+        }
     },
     watch: {
         // 监听搜索框的值改变,根据改变的值找到标题包含这个值的内容
@@ -156,9 +180,7 @@ export default{
                 }
                 this.search_keydown=true;
             }else{
-                this.$router.push({
-                    path:"/index"
-                })
+                
                 this.searchResult=[];
                 this.search_keydown=false;
             }
@@ -234,5 +256,7 @@ export default{
 	aside .type dd a:hover{
 		color:#00B7FF;
 	}
-   
+    .changeColor{
+        text-decoration: underline;
+    }
 </style>

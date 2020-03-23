@@ -6,7 +6,7 @@
 				<img src="../../assets/logo.png" alt="" style="width: 50%;height: 100%;">
 			</div>
 			<div class="title">
-				个人博客后台
+				博客后台
 			</div>
 			<div class="head_right">
 				<el-link href="http://localhost:8080/login" target="">退出</el-link>

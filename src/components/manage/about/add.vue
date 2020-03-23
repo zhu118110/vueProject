@@ -28,6 +28,7 @@
 				
 				<!-- quill-editor富文本编辑器 -->
 				<quill-editor class="ql-editor" v-model="form.content" ref="myQuillEditor" :options="editorOption"></quill-editor>
+
 					<!-- VueEditor富文本编辑器 -->
 				<!-- <VueEditor v-model="form.content" :useCustomImageHandler="flag"  @imageAdded="handleImageAdded" :editorToolbar="customToolbar" placeholder="输入内容"></VueEditor> -->
 
@@ -191,9 +192,8 @@ export default({
 		height: 300px;
 	}
 	.ql-editor{
-		
 		white-space: nowrap;
-		padding: 0 0;
+		padding: 0 0 !important;
 	}
 	.ql-editor img{
 		width: 20%;

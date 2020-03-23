@@ -18,9 +18,10 @@
 		<!-- <navList></navList> -->
 		<nav>
 			<ul>
-				<li  v-for="(nav,index) in navList" @click="toType(nav.path,index)">
+				<li v-for="(nav,index) in navList" @click="toType(nav.path,index)"><!-- :class="{'changeColor':col==index}" -->
+					
 					{{nav.nav}}
-					<!-- <a>{{nav.nav}}</a> -->
+					
 				</li>
 			
 			</ul>
@@ -93,6 +94,7 @@ export default{
 			],
 			articles:[],
 			searchDatas:[],
+			col:0,
 		}
 	},
 	components: {
@@ -120,6 +122,7 @@ export default{
 		// 点击导航获取每个分类的内容
 		// 点击时传递参数
 		toType(ele,index){
+			this.col=index;
 			// 点击首页跳转到首页,不去后台获取数据
 			if(ele=="/"){
 				this.$router.push({
@@ -199,7 +202,10 @@ export default{
 	nav ul li:hover{
 		color: #00B7FF;
 	}
-	
+	.changeColor{
+        color: #00B7FF;
+    }
+
 	
 	/* 主页 */
 	.main{

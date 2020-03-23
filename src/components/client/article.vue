@@ -25,7 +25,7 @@ export default{
 	
 	data(){
 		return{
-			pageSize:10,
+			pageSize:7,
 			currentPage:1,
 			articles:[],
 			url:"http://127.0.0.1:3000",
