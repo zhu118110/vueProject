@@ -112,11 +112,11 @@ export default {
 								left: 'center'
 							},
 								// 不显示鼠标放上去时显示的提示信息
-							// tooltip: {
-							//   trigger: 'item',
-							//   alwaysShowContent:true,
-							//  
-							// },
+							tooltip: {
+							  trigger: 'item',
+							  alwaysShowContent:true,
+							  formatter: "{b}:{d}%"	
+							},
 
 							// 图例的设置
 							legend: {   
@@ -138,8 +138,9 @@ export default {
 									itemStyle:{ 
 										normal:{ 
 											label:{ 
-													show: true, 
-													formatter: "{b}:查看{c}次,占总比例{d}%"
+												show: true, 
+												formatter: "{b}:查看{c}次"
+												
 											}, 	
 										} 
 									}
@@ -158,13 +159,16 @@ export default {
 				.then(res=>{
 					
 					if(res.data){
+						
 						let todayDate=this.szqc2(res.data);
+
 						 for( let i in todayDate ){
 							 this.DailyVisit.xData.push(todayDate[i].readDate);
 							 
 							 this.DailyVisit.readSum.push(todayDate[i].readSum)
 							 this.visitLine(this.DailyVisit.xData,this.DailyVisit.readSum)
 						 }
+						
 					}
 
 				})

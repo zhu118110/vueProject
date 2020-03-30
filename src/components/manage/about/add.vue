@@ -184,17 +184,20 @@ export default({
 })
 </script>
 
-<style>
+<style scoped>
 	.el-form-item__content{
 		line-height: 30px;
 	}
-	.ql-container{
-		height: 300px;
+	/deep/ .ql-container{
+		height: 500px;
 	}
+	
 	.ql-editor{
+		
 		white-space: nowrap;
 		padding: 0 0 !important;
 	}
+	
 	.ql-editor img{
 		width: 20%;
 		height:20%;

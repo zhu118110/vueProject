@@ -135,5 +135,7 @@ export default{
    .el-textarea .el-textarea__inner{
        resize: none;
    }
-
+    /deep/ .ql-container{
+		height: 500px;
+	}
 </style> 

@@ -17,7 +17,7 @@
 export default {
     name:"fenye",
     props: {
-        totle:Number,
+        totle:Number+"哈哈",
         defaultPageSize:Number
     },
     data(){

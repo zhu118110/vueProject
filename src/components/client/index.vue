@@ -1,8 +1,7 @@
 <!-- 主页 -->
 <template>
-<!-- <div class="body"> -->
 	<div class="box">
-		
+
 		<!-- 头部 -->
 		<header>
 			<div>
@@ -10,24 +9,24 @@
 				<p>这是一个使用express+mongoose做的博客!!!</p>
 			</div>
 			<div>
-			
+
 				<router-link to="/login">个人登录</router-link>
 			</div>
 		</header>
-		
+
 		<!-- <navList></navList> -->
 		<nav>
 			<ul>
 				<li v-for="(nav,index) in navList" @click="toType(nav.path,index)"><!-- :class="{'changeColor':col==index}" -->
-					
+
 					{{nav.nav}}
-					
+          
 				</li>
-			
+
 			</ul>
 		</nav>
-		
-		
+
+
 		<!-- 文章区域 -->
 		<div class="main">
 			<!-- 主要内容显示部分 -->
@@ -41,18 +40,11 @@
 				<!-- 父组件接收子组件数据 -->
 				<sidebar></sidebar>
 			</aside>
-			
-			
+
+
 		</div>
-		
-		
-		<!-- 底部 -->
-		<!-- <footer>
-			<span>沪ICP备00000000号-1</span>
-		</footer> -->
 
 	</div>
-<!-- </div> -->
 </template>
 
 <script>
@@ -118,7 +110,7 @@ export default{
 		// 	this.currentPage=page
 		// 	console.log(page);
 		// },
-		
+
 		// 点击导航获取每个分类的内容
 		// 点击时传递参数
 		toType(ele,index){
@@ -131,7 +123,7 @@ export default{
 				return;
 			}
 			// 路由跳到分类页面,分类页面根据参数获取内容
-			
+
 			this.$router.push({
 				path:ele,
 				query:{
@@ -140,22 +132,22 @@ export default{
 			})
 		},
 
-		
+
 	}
 }
 </script>
 
 <style scoped="scoped">
-	
+
 
 	.box{
 		min-height:100%;
-		
+
 	}
 	/* 头部 */
 	header{
 		width: 100%;
-		
+
 		display: flex;
 		justify-content: space-between;
 	}
@@ -166,7 +158,7 @@ export default{
 	header div:nth-child(2) a{
 		color: #6A6A6A;
 	}
-	
+
 	header h2{
 		color: #bbb;
 	}
@@ -174,7 +166,7 @@ export default{
 		margin-top: 10px;
 		font-size: 14px;
 	}
-	
+
 	/* 导航 */
 	nav{
 		width: 100%;
@@ -206,7 +198,7 @@ export default{
         color: #00B7FF;
     }
 
-	
+
 	/* 主页 */
 	.main{
 		width: 100%;
@@ -225,7 +217,7 @@ export default{
 		width: 20%;
 		padding: 10px 0;
 	}
-	
+
 
 
 
@@ -237,6 +229,6 @@ export default{
 		font-size: 14px;
 		/* position: fixed;
 		bottom: 100px; */
-		
+
 	}
 </style>
