@@ -86,7 +86,7 @@
 
 			<div slot="footer" style="text-align:right">
 				<el-button type="primary" title="确定" :disabled="aboutReply.sure" @click="sureReply()">确定</el-button>
-				<el-button @click="replyReset()">重置</el-button>
+				<el-button :disabled="aboutReply.sure" @click="replyReset()">重置</el-button>
 			</div>
 		</el-dialog>
 
@@ -212,34 +212,50 @@ export default{
 		// 点击删除按钮删除选中的数据
 			// @ 参数arr，是一个数组,
 		del(arr){
+			
 			let idArr=[];  //存放数据的_id
+			let that=this;
 			for( let i in arr){
 				idArr.push(arr[i]._id);  //获取选中的评论的id
-			}
-			this.$axios.get(this.url+"/delpl",{params:{
-				plArr:idArr
-			}})
-			.then(res=>{
-				
-				// let that=this;
-				// if(res.data==1){
-				// 	that.$message({
-				// 		message:"删除成功",
-				// 		type:"success",
-				// 		durations:1000,
-				// 		onClose:function(){
-				// 			that.getpl()
-				// 		}
-				// 	})
-				// }
-			})
+			};
+			// 并发请求
+			that.$axios.all([that.tjPL(idArr),that.schf(idArr)])
+			.then(that.$axios.spread(function(pl,hf){
+				if(pl.data==1&&hf.data!==""){
+					that.$message({
+						message:"删除成功",
+						type:"success",
+						durations:1000,
+					})
+					that.getpl()
+				}else{
+					that.$message({
+						message:"删除失败",
+						type:"success",
+						durations:1000,
+					})
+				}
+			}))
 			.catch(err=>{
 				this.$message({
-					message:"删除失败",
+					message:"未知错误"+err,
 					type:"error",
 					durations:1000,
 				})
 			})
+			
+		},
+		// 删除选中的评论
+		tjPL(idArr){
+			return this.$axios.get(this.url+"/delpl",{params:{
+				idArr:idArr
+			}})
+		},
+		// 删除评论的同时将对应的回复也删除
+		schf(idArr){
+			return this.$axios.get(this.url+"/delhf",{params:{
+				idArr:idArr
+			}})
 		},
 
 		// 点击回复评论
@@ -274,13 +290,12 @@ export default{
 					}
 				})
 				.then(res=>{
-					
 					if(res.data==1){
-						this.aboutReply.sure=true;   //禁用 '确定' 按钮
+						this.aboutReply.sure=true;   //禁用 '确定''重置' 按钮
 						var that=this;
 						that.$message({
 							message:"回复成功",
-							durations:500,
+							durations:100,
 							type:"success",
 							onClose:function(){
 								
