@@ -68,12 +68,14 @@ export default{
         // 通过路由获取到文章Id，再通过文章id查找对应的文章信息.在页面刚加载 created() 时调用
         getRoutId(){
            this.queryId=this.$route.query.id;  //通过路由获取到文章Id
-           this.$axios.get(this.url+"/details",{params:{
+           this.$axios.get(this.url+"/editData",{params:{
                id:this.queryId
            }})
-           .then(result=>{
-               this.form=result.data;
-           
+           .then(res=>{
+             
+               if(res.data){
+                   this.form=res.data;
+               }
            })
            .catch(err=>{
                console.log(err)

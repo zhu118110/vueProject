@@ -74,8 +74,8 @@ export default{
 	.article h3:hover{
 		text-decoration: underline;
 	}
-	.article .content{
-		line-height: 25px;
+	.article>.content{
+		/* margin-top: 15px; */
 		font-size: 16px;
 		color: #666;
 		overflow:hidden;
@@ -85,6 +85,9 @@ export default{
 		-webkit-line-clamp:2;
 		padding:10px 15px;
 		white-space:pre-line;
+		min-height: 40px;
+		max-height: 65px;
+		line-height: 25px;
 	}
 	/deep/ .article .content>p{
 		overflow:hidden;

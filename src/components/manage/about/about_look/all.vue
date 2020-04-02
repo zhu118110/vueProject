@@ -117,6 +117,7 @@ export default{
 			this.$axios.get(this.url+"/look")   //请求后台
 			.then(res=>{
 				this.article=res.data;
+				
 			})
 			.catch(err=>{
 				console.log(err)
