@@ -25,16 +25,25 @@ export default {
 			lines:"",
 						// 各个标题的饼图
             classifys:{
-				readNum:0,
-							// 饼图数据
+				readNum:0,			// 饼图数据
 			    opinion:[],
 			    opinionData:[]
             },
 			
 						// 每日访问量的折线图
 			DailyVisit:{
-				xData:["2020-2-14","2020-2-15","2020-2-16"], //x轴显示的日期
-				readSum:[10,15,20],
+				xData:["2019-12-04","202-2-04","202-2-05"], //x轴显示的日期
+				readSum:[{
+					kind:"Node",
+					readSum:10
+				},{
+					kind:"PHP",
+					readSum:15
+				},{
+					kind:"Mongo",
+					readSum:20
+				}],
+				series:[]
 			},
 			amount:0,			
         }
@@ -44,7 +53,7 @@ export default {
 		
 	},
     mounted () {
-		this.visit()
+		this.visit();
 	},
     methods: {
 		// 数组去重
@@ -64,7 +73,7 @@ export default {
 			szqc2:function(arr){
 				for(var i=0; i<arr.length; i++){
 					for(var j=i+1; j<arr.length; j++){
-						if(arr[i].readDate==arr[j].readDate){         //第一个等同于第二个，splice方法删除第二个
+						if(arr[i].kind==arr[j].kind){         //第一个等同于第二个，splice方法删除第二个
 							arr[i].readSum+=arr[j].readSum
 							arr.splice(j,1);
 							j--;
@@ -151,28 +160,28 @@ export default {
 
 			// 获取今日的日期
 			visit:function(){
-				let today=this.dateStr();
-				
+				let today=this.dateStr().split(" ")[0];
 				this.$axios.get(this.url+"/getVisited",{params:{
 					today:today
 				}})
 				.then(res=>{
 					
 					if(res.data){
-						
-						let todayDate=this.szqc2(res.data);
-
-						 for( let i in todayDate ){
-							 this.DailyVisit.xData.push(todayDate[i].readDate);
-							 
-							 this.DailyVisit.readSum.push(todayDate[i].readSum)
-							 this.visitLine(this.DailyVisit.xData,this.DailyVisit.readSum)
-						 }
-						
+						// 查看的数据=不含重复的分类的数据
+						let watchData=this.szqc2(res.data)
+						this.DailyVisit.xData.push(watchData[0].readDate);
+						for(let i in watchData){
+							// this.DailyVisit.readSum.push(watchData[i].readSum)
+							this.DailyVisit.series.push(watchData[i]);
+						}
+						this.DailyVisit.series=this.DailyVisit.series.concat(this.DailyVisit.readSum)
+						console.log(this.DailyVisit.series) 
+						this.visitLine(this.DailyVisit.xData,this.DailyVisit.series);
 					}
 
 				})
 				.catch(err=>{
+					
 				})
 			},
 
@@ -187,7 +196,7 @@ export default {
 					title:{
 						text:"每日查看的数量",
 						left: 'center',
-						subtext:"总浏览"+sum+"次",
+						// subtext:"总浏览"+sum+"次",
 						// 副标题的样式
 						subtextStyle:{
 							fontSize:12,
@@ -202,9 +211,12 @@ export default {
 					},
 
 					legend:{
-						show:true,
-						y:'bottom',
-						x:'center',
+						
+						show:true,   //是否显示图例,默认true
+						orient:'horizontal',   //图例的布局方式,默认是水平布局horizontal,垂直布局为vertical
+						x:'center',   //在x轴上的位置,值有'left','center','right'
+						y:'bottom',    //在y轴上的位置,值有'top','middle','bottom'
+						
 					},
 					xAxis:[{
 						type: 'category',
@@ -218,19 +230,41 @@ export default {
 						type:'value',
 						
 					},
-					series:[{
-						type:'line',
-						// name:"",
-						data:serieDate,
-						itemStyle:{ 
-							normal:{ 
-								label:{ 
-										show: true, 
-										formatter: "{c}"
-								}, 	
-							} 
+					// 缩放
+					dataZoom:[{
+						type:'inside',   //内置于坐标系中,可以让用户通过鼠标滑轮、滚动、触屏等来缩放	
+					},{
+						startValue: '2020-02-15'
+					}],
+
+
+					series:function(){
+						var serie=[];
+						var that=this;
+						
+						for(let i in serieDate){
+						   var item={
+								type:'line',
+								name:serieDate[i].kind,
+								// [serieDate[i].readSum]
+								data:[serieDate[i].readSum],
+								itemStyle:{ 
+									normal:{ 
+										label:{ 
+											show: true, 
+											formatter: "{c}"
+										}, 	
+									} 
+								}
+							}
+							
+							serie.push(item);
+							
 						}
-					}]
+						return serie;
+					}(),
+					
+
 				})
 			}
     }
