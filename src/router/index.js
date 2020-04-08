@@ -72,6 +72,9 @@ export default new Router({
 		  path: '/manage',  //后台管理主页
 		  name: 'manage',
 		  component: manage,
+		  meta: {
+				keepAlive: true // 需要被缓存
+			},
 			children:[{
 				// 总览
 				path:"/pandect",
@@ -80,7 +83,10 @@ export default new Router({
 			},{
 				path: '/addwz',  //添加文章
 				name: 'addwz',
-				component: add
+				component: add,
+				meta: {
+					keepAlive: true // 需要被缓存
+				}
 			},{
 				path: '/all',   //全部文章
 				name: 'all',
@@ -92,7 +98,10 @@ export default new Router({
 			},{
 				path:"/edit",   //编辑文章
 				name:"edit",
-				component:edit
+				component:edit,
+				meta: {
+					keepAlive: true // 需要被缓存
+				}
 			},{
 				path:"/hot",   //热门文章
 				name:"hot",

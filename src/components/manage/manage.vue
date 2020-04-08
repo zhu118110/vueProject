@@ -47,7 +47,9 @@
 				</el-menu>
 			</el-aside>
 			<el-main>
-				<router-view></router-view>	
+				<keep-alive include='add'>
+					<router-view></router-view>	
+				</keep-alive>
 			</el-main>
 		</el-container>
 	</el-container>

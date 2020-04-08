@@ -222,7 +222,10 @@ export default {
 						type:'inside',   //内置于坐标系中,可以让用户通过鼠标滑轮、滚动、触屏等来缩放
 						xAxisIndex:0,   //指定缩放时控制的哪条轴进行缩放,值时轴的下标
 						yAxisIndex:0,
-						
+						// filterMode:'filter', //当前数据窗口外的数据，被 过滤掉。即 会 影响其他轴的数据范围。每个数据项，只要有一个维度在数据窗口外，整个数据项就会被过滤掉。
+						// filterMode:'weakFilter',     //当前数据窗口外的数据，被 过滤掉。即 会 影响其他轴的数据范围。每个数据项，只有当全部维度都在数据窗口同侧外部，整个数据项才会被过滤掉。
+						// filterMode:'empty',   //当前数据窗口外的数据，被 设置为空。即 不会 影响其他轴的数据范围。
+						filterMode:'none',//不过滤数据,只改变数轴的范围
 						
 					}],
 					series:[{
@@ -232,8 +235,8 @@ export default {
 						itemStyle:{ 
 							normal:{ 
 								label:{ 
-										show: true, 
-										formatter: "{c}"
+									show: true, 
+									formatter: "{c}"
 								}, 	
 							} 
 						}

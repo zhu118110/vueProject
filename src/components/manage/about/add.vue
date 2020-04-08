@@ -9,6 +9,7 @@
  -->
 <template>
 	<div style="width: 70%;">
+		
 		<el-form label-width="80px" :rules="rules" :model="form" ref="form" class="demo-ruleForm">
 			<el-form-item label="标题" prop="title">
 				<el-input v-model="form.title" class="my_inp">
@@ -144,7 +145,7 @@ export default({
 							date:this.dateStr()
 						}))
 						.then(res=>{
-							console.log(res.data)
+							
 							// 判断是否成功
 							if(res.data==1){
 								this.$message({
@@ -154,6 +155,7 @@ export default({
 								})
 								
 								this.$refs[form].resetFields()   //清除所有输入框的内容
+								this.$route.meta.keepAlive=false;
 							}else{
 								this.$message({
 									message:"发表失败",
