@@ -1,3 +1,6 @@
+*****此项目属于自己单独开发，主要是对vue的练习。*****
+
+
 此项目没有node_modules文件  下载完成自己安装。
 vuewProject只是前端vue的代码,后端接口代码接口请移步node-express查看。
 npm run build 生产成的dist文件夹直接复制在 node-express项目中。
