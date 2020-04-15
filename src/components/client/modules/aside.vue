@@ -6,7 +6,7 @@
                     <button @click="searchBtn()">搜索</button>
                 </div>
                 <ul v-show="search_keydown">
-                    <li v-for="(item,index) in searchResult" ref="liRef" @mouseout="selectOut()" @mouseover="selectOver()"  @click="selectLi(index)">
+                    <li v-for="(item,index) in searchResult" :title="item.title" ref="liRef" @mouseout="selectOut()" @mouseover="selectOver()"  @click="selectLi(index)">
                         {{item.title}}
                     </li>
                 </ul>
@@ -122,7 +122,7 @@ export default{
 
         // 1.搜索框失去焦点后让搜索结果隐藏
         searchBlur(){
-            console.log(this.searchMsg,this.liRef)
+            // console.log(this.searchMsg,this.liRef)
             // 如果搜索字段为空或者鼠标没有放在搜索列表(li)时,搜索列表隐藏,跳转至首页
             if(this.searchMsg==""&&this.liRef==false){
                 this.search_keydown=false;
@@ -205,6 +205,11 @@ export default{
         background: #fff;
     }
     aside .seach ul li{
+        overflow: hidden;
+        
+        -webkit-line-clamp: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         padding: 5px;
         border-bottom: 1px solid #eee;
     }
@@ -237,7 +242,8 @@ export default{
 	}
 	aside .type dd{
 		font-size: 14px;
-		padding: 10px 15px;
+        padding-left:5px;
+        margin-top: 10px;
 		color: #6A6A6A;
         overflow:hidden;
 		text-overflow:ellipsis;

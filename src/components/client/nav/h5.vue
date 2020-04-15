@@ -32,15 +32,16 @@ export default{
 	methods: {
 		getArticle(){
 			this.type=this.$route.query.type;
-			this.$axios.get(this.url+"/type/"+this.type)
+			this.$axios.post(this.url+"/type/"+this.type)
 			.then(res=>{
+				
 				if(res.data.length>0){
 					this.articles=res.data.reverse();
 					this.isShow=true
 				}else{
 					this.isShow=false
 				}
-				// this.articles=res.data;
+				this.articles=res.data;
 			
 			})
 			.catch(err=>{

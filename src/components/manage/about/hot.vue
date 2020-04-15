@@ -140,6 +140,11 @@ export default{
 </script>
 
 <style scoped="scoped">
+	/deep/ .el-table .cell{
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
 	/deep/.el-table td{
 		text-align: center;
 	}

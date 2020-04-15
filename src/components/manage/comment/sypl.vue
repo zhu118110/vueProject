@@ -222,12 +222,16 @@ export default{
 			that.$axios.all([that.tjPL(idArr),that.schf(idArr)])
 			.then(that.$axios.spread(function(pl,hf){
 				if(pl.data==1&&hf.data!==""){
+					
 					that.$message({
 						message:"删除成功",
 						type:"success",
-						durations:1000,
+						durations:500,
+						onClose:function(i){
+							that.getpl()
+						}
 					})
-					that.getpl()
+					
 				}else{
 					that.$message({
 						message:"删除失败",
@@ -253,6 +257,7 @@ export default{
 		},
 		// 删除评论的同时将对应的回复也删除
 		schf(idArr){
+			
 			return this.$axios.get(this.url+"/delhf",{params:{
 				idArr:idArr
 			}})

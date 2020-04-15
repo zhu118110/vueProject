@@ -34,6 +34,7 @@
 <script>
 import hljs from 'highlight.js'
 import 'highlight.js/styles/xcode.css'
+
 export default{
     name:"edit",
     data(){
@@ -65,6 +66,12 @@ export default{
        this.getRoutId();
     },
     methods: {
+        // 文章代码高亮
+		handleImageAdded(file,Editor,cursorLocation){
+			// console.log(file,editor,cursorLocation)
+			Editor.insertEmbed(cursorLocation, 'image', url);
+		},
+
         // 通过路由获取到文章Id，再通过文章id查找对应的文章信息.在页面刚加载 created() 时调用
         getRoutId(){
            this.queryId=this.$route.query.id;  //通过路由获取到文章Id
@@ -72,7 +79,7 @@ export default{
                id:this.queryId
            }})
            .then(res=>{
-             
+              
                if(res.data){
                    this.form=res.data;
                }

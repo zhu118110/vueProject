@@ -101,7 +101,7 @@ export default{
 		display:-webkit-box;
 		-webkit-box-orient:vertical;
 		-webkit-line-clamp:2;
-		padding:10px 15px;
+		padding:10px 15px 0;
 		white-space:pre-line;
 		min-height: 40px;
 		max-height: 65px;
@@ -111,7 +111,7 @@ export default{
 		overflow:hidden;
 	}
 	.article .time{
-		/* margin-top: 10px; */
+		margin-top: 5px;
 		font-size: 12px;
 		color: rgb(138, 135, 135);
 	}

@@ -16,8 +16,9 @@
 		</div>
 
 		<el-dialog :title="'文章标题:'+dialogTitle" :visible.sync="commentArea" :close-on-click-modal='false' width="30%">
-			<el-form ref="form" class="my_cmt_form" :model="form" size="mini">
-												<!--prop对应的是验证规则-->
+												 <!-- model是表单数据对象 -->
+			<el-form ref="form" class="my_cmt_form" :model="form" size="mini" :rules="rules">
+												<!--prop对应的model对象下的属性-->
 				<el-form-item label="输入评论:" size="mini" prop="text">  
 					<el-input type="textarea" v-model="form.text" placeholder="说点什么吧！" :autosize="{minRows:3,maxRows:3}"></el-input>
 				</el-form-item>
@@ -100,6 +101,9 @@ export default{
 			form:{   //存储输入的评论
 				text:""
 			},
+			rules:{
+				text:[{min:5,message: '最少输入5个字符',}]
+			},
 			disabled:false,
 			cmnts:[],   //后台获取到的评论
 			isCmnts:false,   //是否有评论
@@ -167,9 +171,11 @@ export default{
 
 		// 点击提交评论
 		talk(form){
+			
 			this.commentArea=false;
 			this.$refs[form].validate(val=>{
-				if(val){
+				//  判断验证规则收否通过以及评论内容不是全部为空格
+				if(val&&this.form.text.trim().length>0){
 					let that=this;
 				// 并发请求
 					that.$axios.all([this.tjpl(),this.hqpl()])
@@ -182,6 +188,12 @@ export default{
 							that.$refs[form].resetFields()
 						}
 					}))
+				}else{
+					this.$message({
+						message:"请输入有效评论",
+						type:"warning",
+						durations:1000,
+					})
 				}
 			})
 		},

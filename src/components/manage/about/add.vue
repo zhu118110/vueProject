@@ -114,8 +114,9 @@ export default({
     	VueEditor
 	},
 	methods:{
+		// 文章代码高亮
 		handleImageAdded(file,Editor,cursorLocation){
-			console.log(file,editor,cursorLocation)
+			// console.log(file,editor,cursorLocation)
 			Editor.insertEmbed(cursorLocation, 'image', url);
 		},
 

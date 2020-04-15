@@ -19,9 +19,11 @@
 			sortable
 			>
 		</el-table-column>
+
 		<el-table-column
 			prop="title"
 			label="文章标题"
+			
 		>
 		</el-table-column>
 		<el-table-column
@@ -215,10 +217,16 @@ export default{
 </script>
 
 <style scoped="scoped">
+	/deep/ .el-table .cell{
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
 	/deep/.el-table td{
 		text-align: center;
 	}
 	/deep/.el-table th{
 		text-align: center;
 	}
+	
 </style>
