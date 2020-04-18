@@ -82,7 +82,7 @@ export default new Router({
 				component:pandect
 			},{
 				path: '/addwz',  //添加文章
-				name: 'addwz',
+				name: 'add',
 				component: add,
 				meta: {
 					keepAlive: true // 需要被缓存

@@ -16,10 +16,8 @@
                 <el-input v-model="form.kind" readonly></el-input>
             </el-form-item>
             <el-form-item label="内容">
-                <!-- <el-input type="textarea" v-model="form.content"></el-input> -->
-
-                <quill-editor v-model="form.content" ref="myQuillEditor" :options="editorOption"></quill-editor>
-
+               
+                <editor></editor>
             </el-form-item>
             <el-form-item label="作者">
                 <el-input type="text" v-model="form.writer"></el-input>
@@ -32,6 +30,7 @@
     </div>
 </template>
 <script>
+import editor from '../../repeatModule/editor'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/xcode.css'
 
@@ -42,25 +41,11 @@ export default{
             queryId:'',
             form:{},
             url:"http://127.0.0.1:3000",
-            editorOption:{
-				modules:{
-					toolbar:[
-						['bold', 'italic', 'underline', 'strike'],    //加粗，斜体，下划线，删除线
-						['blockquote', 'code-block'],     //引用，代码块
-						[{ 'size': ['small', 'normal', 'large', 'huge'] }], // 字体大小
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],     //列表
-						[{ 'color': [] }, { 'background': [] }],     // 字体颜色，字体背景颜色
-						['image','video']    //上传图片、上传视频
-					],
-					syntax:{
-						highlight: text =>{
-							return hljs.highlightAuto(text).value;
-						} 
-					}
-				},
-				
-			},
+           
         }
+    },
+    components: {
+        editor
     },
     created () {
        this.getRoutId();

@@ -10,8 +10,8 @@
 					已有{{cmnts.length}}条评论
 				</span>
 			</div>
-			<div class="comment_inp" @click="msg()">
-				<el-input type="textarea" readonly placeholder="最少输入5个字符哦" :autosize="{minRows:1,maxRows:1}"></el-input>
+			<div class="comment_inp">
+				<el-input @click="msg()" type="textarea" readonly :disabled="msgDiabled" placeholder="最少输入5个字符哦" :autosize="{minRows:1,maxRows:1}"></el-input>
 			</div>
 		</div>
 
@@ -44,7 +44,7 @@
 	<!-- 没有评论时的提示 -->
 		
 		<div v-if="!isCmnts" style="text-align:center;font-size:14px;color:#b1b1b1;margin-top:20px">
-			暂无相关评论！
+			{{noComment}}
 		</div>
 		<!-- 评论 -->
 		<div class="talk" v-for="cmt in cmnts.slice( (currentPage-1)*pageSize,pageSize*currentPage )">
@@ -60,26 +60,6 @@
 			</header>
 			<div>
 				<span>{{cmt.content}}</span>
-				
-				<!-- <dl class="talk_time">
-					<div style="display:flex">
-						<dd>一周前</dd>
-						
-						<dd style="margin:0">评论(0)</dd>
-					</div>
-					
-					<div style="display:flex">
-						<dd>
-							<i class="iconfont icon-dianzan1"></i>
-							<span>赞(0)</span>
-						</dd>
-						<dd>
-							<i class="iconfont icon-dianzan1"></i>
-							<span>踩(0)</span>
-						</dd>
-					</div>
-					
-				</dl> -->
 			</div>
 			
 		</div>
@@ -95,6 +75,7 @@ export default{
 		return{
 			pageSize:5,
 			currentPage:1,
+			noComment:"暂无相关评论",
 			id:'',   //文章id，通过路由传递过来
 			url:"http://127.0.0.1:3000",    //后台网址
 			articles:[],   //文章详细信息,通过文字id查找得到
@@ -107,7 +88,7 @@ export default{
 			disabled:false,
 			cmnts:[],   //后台获取到的评论
 			isCmnts:false,   //是否有评论
-
+			msgDiabled:false,
 			dialogTitle:"",
 			commentArea:false
 		}
@@ -154,18 +135,30 @@ export default{
 
 		// 通过路由给的文章id获取到对应的文章,在页面刚加载时调用
 		getDetail(){
-			this.id=this.$route.query.id;
-			this.articles=[];
+			this.id=this.$route.query.id;  //文章id
+			this.articles=[];  //接收数据库获取到的文章
 			this.$axios.get(this.url+"/details",{params:{   
 				id:this.id,
-				readDate:this.dateStr(),
+				readDate:this.dateStr(),  //阅读的日期
 			}})
 			.then(res=>{
-				this.articles.push(res.data);//获取到数据
-				// console.log(res.data);
-				this.dialogTitle=this.articles[0].title;
-				
-				// console.log(this.articles[0].title+"是"+this.articles[0].reading)
+				// 请求成功
+				if(res.data!==0){
+					this.articles.push(res.data);//获取到数据
+					// console.log(res.data);
+					this.dialogTitle=this.articles[0].title;
+				}else{
+					// 请求失败
+					this.noComment="数据错误，请返回其他页面";
+					this.msgDiabled=true;
+				}
+			})
+			.catch(err=>{
+				this.$message({
+					message:"未知错误"+err,
+					durations:1000,
+					type:"warning"
+				})
 			})
 		},
 

@@ -16,10 +16,7 @@
             </el-form-item>
 
            <el-form-item label="内容">
-                <!-- <el-input type="textarea" v-model="form.content" readonly="readonly" ></el-input> -->
-
-                <!-- quill-editor富文本编辑器 -->
-				<quill-editor v-model="form.content" ref="myQuillEditor" disabled :options="editorOption"></quill-editor>
+             <editor></editor>
 
             </el-form-item>
 
@@ -34,6 +31,7 @@
    
 </template>
 <script>
+import editor from '../../repeatModule/editor'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/xcode.css'
 export default {
@@ -43,26 +41,11 @@ export default {
             queryId:'',  //接收路由携带的id
             form:{},   //文章内容
             url:"http://127.0.0.1:3000",
-            // quill-editor文本编辑器属性
-			editorOption:{
-				modules:{
-					toolbar:[
-						['bold', 'italic', 'underline', 'strike'],    //加粗，斜体，下划线，删除线
-						['blockquote', 'code-block'],     //引用，代码块
-						[{ 'size': ['small', 'normal', 'large', 'huge'] }], // 字体大小
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],     //列表
-						[{ 'color': [] }, { 'background': [] }],     // 字体颜色，字体背景颜色
-						['image','video']    //上传图片、上传视频
-					],
-					syntax:{
-						highlight: text =>{
-							return hljs.highlightAuto(text).value;
-						} 
-					}
-				},
-				
-			},
+           
         }
+    },
+    components: {
+        editor
     },
     created(){
         this.getRoutId();

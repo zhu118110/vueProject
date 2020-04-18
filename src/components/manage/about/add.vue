@@ -25,15 +25,13 @@
 				  <el-option label="Mongodb" value="Mongodb"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="内容" prop="content">
-				
-				<!-- quill-editor富文本编辑器 -->
-				<quill-editor class="ql-editor" v-model="form.content" ref="myQuillEditor" :options="editorOption"></quill-editor>
 
-					<!-- VueEditor富文本编辑器 -->
-				<!-- <VueEditor v-model="form.content" :useCustomImageHandler="flag"  @imageAdded="handleImageAdded" :editorToolbar="customToolbar" placeholder="输入内容"></VueEditor> -->
+			<el-form-item label="内容" prop="content">
+				<!-- 文本编辑器 -->
+				<editor></editor>	
 
 			</el-form-item>
+
 			<el-form-item label="作者" prop="writer" class="my_inp">
 				<el-input type="text" placeholder="默认昵称:没感情的程序猿" v-model="form.writer"></el-input>
 			</el-form-item>
@@ -47,8 +45,7 @@
 
 <script>
 
-import { VueEditor } from 'vue2-editor'    //*引入vue2-editor
-import quillConfig from "../../../assets/quill-config.js"
+import editor from '../repeatModule/editor'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/xcode.css'
 import QS from 'qs'
@@ -77,43 +74,18 @@ export default({
 				}]
 			},
 			
-			// quill-editor文本编辑器属性
-			editorOption:{
-				
-				modules:{
-					toolbar:[
-						['bold', 'italic', 'underline', 'strike'],    //加粗，斜体，下划线，删除线
-						['blockquote', 'code-block'],     //引用，代码块
-						[{ 'indent': '-1'}, { 'indent': '+1' }],
-						[{ 'size': ['small', 'normal', 'large', 'huge'] }], // 字体大小
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],     //列表
-						[{ 'color': [] }, { 'background': [] }],     // 字体颜色，字体背景颜色
-						// ['image']    //上传图片、上传视频
-					],
-					syntax:{
-						highlight: text =>{
-							return hljs.highlightAuto(text).value;
-						} 
-					}
-				},
-				placeholder:"输入内容吧....."
-			},
-
-			// VueEditor的文本编辑器属性
-			// customToolbar:[
-			// 	['bold', 'italic', 'underline','code-block','image'],
-			// 	[{'list': 'ordered'}, {'list': 'bullet'}],
-			// 	[{'indent': '-""'}, {'indent': '+""'}],
-			// 	[{'header': '2'}], [{'align': 'center'}, {'align': 'justify'}, {'align': 'right'}],
-				
-			// ],
 		}
 	},
-	// 注册vueEditor组件
-	components:{
-    	VueEditor
+	components: {
+		editor	
+	},
+	mounted () {
+			
 	},
 	methods:{
+		
+
+
 		// 文章代码高亮
 		handleImageAdded(file,Editor,cursorLocation){
 			// console.log(file,editor,cursorLocation)
@@ -123,27 +95,17 @@ export default({
 		
 		// 点击发表
 		onSure(form){
+			
 			this.$refs[form].validate((valid) => {
 				if (valid){
 					if(this.form.content){
-						console.log(this.form.content);
-						// 发送到后端,后端返回1代表发表成功
-						// this.$axios.post(this.url+"/getAdd",{
-						// 	params:{
-						// 		content:this.form.content,
-						// 		title:this.form.title,
-						// 		kind:this.form.kind,
-						// 		writer:this.form.writer,
-						// 		date:this.dateStr()
-						// 	}
-						// })
 						this.$axios.post(this.url+"/getAdd",QS.stringify({
-							content:this.form.content,
+							// content:this.form.content,
 							content:this.form.content,
 							title:this.form.title,
 							kind:this.form.kind,
 							writer:this.form.writer,
-							date:this.dateStr()
+							date:this.dateStr(),
 						}))
 						.then(res=>{
 							
@@ -155,7 +117,8 @@ export default({
 									durations:1500,
 								})
 								
-								this.$refs[form].resetFields()   //清除所有输入框的内容
+								this.$refs[form].resetFields();   //清除所有输入框的内容
+								this.editor.txt.clear();   //清空编辑器的内容
 								this.$route.meta.keepAlive=false;
 							}else{
 								this.$message({
@@ -181,33 +144,25 @@ export default({
 
 		// 点击重置按钮清空输入框内容
 		onReset(form){
-			this.$refs[form].resetFields()
+			this.$refs[form].resetFields();
+			this.editor.txt.clear();   //清空编辑器的内容
 		}
 	}
 })
 </script>
 
 <style scoped>
+
 	.el-form-item__content{
 		line-height: 30px;
 	}
-	/deep/ .ql-container{
-		height: 500px;
-	}
-	
-	.ql-editor{
-		
-		white-space: nowrap;
-		padding: 0 0 !important;
-	}
-	
-	.ql-editor img{
-		width: 20%;
-		height:20%;
-	}
+
 	.my_inp input{
 		width: 50%
 	}
 
-	
+	.editor{
+		
+		border: 1px solid #DCDFE6;
+	}
 </style>
