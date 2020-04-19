@@ -99,20 +99,8 @@ export default{
 		})
 	},
 	methods:{
-		// // 点击选择每页显示多少条数据时触发
-		// sizeChange(size){
-		// 	this.pageSize=size;
-		// 	console.log(size);
-		// },
-
-		// // 跳转到其他页面时触发
-		// crtChange(page){
-		// 	this.currentPage=page
-		// 	console.log(page);
-		// },
-
 		// 点击导航获取每个分类的内容
-		// 点击时传递参数
+		// 点击时传递参数，ele是页面路径,index是导航下标
 		toType(ele,index){
 			this.col=index;
 			// 点击首页跳转到首页,不去后台获取数据

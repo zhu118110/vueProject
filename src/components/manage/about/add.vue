@@ -27,9 +27,14 @@
 			</el-form-item>
 
 			<el-form-item label="内容" prop="content">
-				<!-- 文本编辑器 -->
-				<editor></editor>	
+				<!-- 文本编辑器 
+					@editorData接收子组件传递的内容数据
+					ref属性也是给子组件进行传值;
+					ps:另一种给子组件传值的方法是  如:child="data"
+				-->
 
+				<editor @editorData="getEditorData(arguments)" ref="clears" ></editor>	
+				
 			</el-form-item>
 
 			<el-form-item label="作者" prop="writer" class="my_inp">
@@ -46,8 +51,6 @@
 <script>
 
 import editor from '../repeatModule/editor'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/xcode.css'
 import QS from 'qs'
 
 export default({
@@ -74,28 +77,35 @@ export default({
 				}]
 			},
 			
+			
 		}
 	},
 	components: {
 		editor	
 	},
+	// directives: {
+	// 	"highlight":function(ele){
+	// 		let blocks = ele.querySelectorAll('pre code');
+	// 		blocks.forEach((block)=>{
+	// 			hljs.highlightBlock(block)
+	// 		})
+	// 	}	
+	// },
 	mounted () {
 			
 	},
 	methods:{
-		
-
-
-		// 文章代码高亮
-		handleImageAdded(file,Editor,cursorLocation){
-			// console.log(file,editor,cursorLocation)
-			Editor.insertEmbed(cursorLocation, 'image', url);
+		// 接收子组件编辑器传来的内容
+		getEditorData(data){
+			this.form.content=data[0];
+			
 		},
+	
 
 		
 		// 点击发表
 		onSure(form){
-			
+			// 验证表单数据是否不为空, valid=true表示表单验证成功
 			this.$refs[form].validate((valid) => {
 				if (valid){
 					if(this.form.content){
@@ -108,8 +118,8 @@ export default({
 							date:this.dateStr(),
 						}))
 						.then(res=>{
-							
 							// 判断是否成功
+							// 1代表发表成功
 							if(res.data==1){
 								this.$message({
 									message:"发表成功",
@@ -117,8 +127,14 @@ export default({
 									durations:1500,
 								})
 								
-								this.$refs[form].resetFields();   //清除所有输入框的内容
-								this.editor.txt.clear();   //清空编辑器的内容
+								this.$refs[form].resetFields();   //清除父组件中所有输入框的内容
+								
+								// 给编辑器组件传递一个值让其清空内容；editorClear()是子组件的一个方法。
+								// 调用方法:
+								//     在父组件中先给引入的子组件添加一个ref属性,如clears，
+								//     通过this.$refs.clears.子组件的方法(参数值) 即可调用子组件的方法
+								this.$refs.clears.editorClear(true)
+
 								this.$route.meta.keepAlive=false;
 							}else{
 								this.$message({
@@ -126,6 +142,7 @@ export default({
 									type:"error",
 									durations:1500,
 								})
+								
 							}
 						})
 						.catch(err=>{
@@ -142,10 +159,15 @@ export default({
 			})
 		},
 
-		// 点击重置按钮清空输入框内容
+		// 点击重置按钮清空各个输入框内容
 		onReset(form){
 			this.$refs[form].resetFields();
-			this.editor.txt.clear();   //清空编辑器的内容
+			// 给编辑器组件传递一个值让其清空内容；editorClear()是子组件的一个方法。
+			// 调用方法:
+			//     在父组件中先给引入的子组件添加一个ref属性,如clears，
+			//     通过this.$refs.clears.子组件的方法(参数值) 即可调用子组件的方法
+			this.$refs.clears.editorClear(true);
+
 		}
 	}
 })

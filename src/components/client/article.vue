@@ -100,12 +100,10 @@ export default{
 		text-overflow:ellipsis;
 		display:-webkit-box;
 		-webkit-box-orient:vertical;
-		-webkit-line-clamp:2;
+		-webkit-line-clamp:1;
 		padding:10px 15px 0;
-		white-space:pre-line;
-		min-height: 40px;
-		max-height: 65px;
-		line-height: 25px;
+		max-height: 30px;
+		/* line-height: 25px; */
 	}
 	.article>.content p{
 		overflow:hidden;

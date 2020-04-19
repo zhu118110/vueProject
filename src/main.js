@@ -16,12 +16,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
 
-// 富文本编辑器
-import VueQuillEditor from 'vue-quill-editor'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-Vue.use(VueQuillEditor)
+
 
 
 import Router from 'vue-router'
@@ -80,6 +75,13 @@ Vue.prototype.getCookie=function(cname){
     }
     return "";
 }
+
+Vue.directive('highlight',function (el) {
+  let blocks = el.querySelectorAll('pre code');
+  blocks.forEach((block)=>{
+    hljs.highlightBlock(block)
+  })
+})
 
 /* eslint-disable no-new */
 new Vue({

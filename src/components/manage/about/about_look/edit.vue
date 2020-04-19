@@ -16,8 +16,8 @@
                 <el-input v-model="form.kind" readonly></el-input>
             </el-form-item>
             <el-form-item label="内容">
-               
-                <editor></editor>
+               <!-- 编辑器内容 -->
+                <editor ref="checkDatas" @editorData="getEditorData(arguments)"></editor>
             </el-form-item>
             <el-form-item label="作者">
                 <el-input type="text" v-model="form.writer"></el-input>
@@ -31,9 +31,6 @@
 </template>
 <script>
 import editor from '../../repeatModule/editor'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/xcode.css'
-
 export default{
     name:"edit",
     data(){
@@ -51,10 +48,10 @@ export default{
        this.getRoutId();
     },
     methods: {
-        // 文章代码高亮
-		handleImageAdded(file,Editor,cursorLocation){
-			// console.log(file,editor,cursorLocation)
-			Editor.insertEmbed(cursorLocation, 'image', url);
+        // 接收子组件编辑器传来的内容
+		getEditorData(data){
+			this.form.content=data[0];
+			
 		},
 
         // 通过路由获取到文章Id，再通过文章id查找对应的文章信息.在页面刚加载 created() 时调用
@@ -67,10 +64,16 @@ export default{
               
                if(res.data){
                    this.form=res.data;
+                   // 通过调用子组件的方法向子组件编辑器传递数据内容，第一个参数是内容，第二个参数不让编辑器禁用
+                    this.$refs.checkDatas.checkData(this.form.content,true);
                }
            })
            .catch(err=>{
-               console.log(err)
+                this.$message({
+                    message:err.message,
+                    type:"error",
+                    durations:1000,
+                })
            })
         },
         // 点击返回上一页
@@ -81,7 +84,6 @@ export default{
         // 确认修改
         alter(){
            
-
             //请求后台,后台返回的数据如果是 1 则修改成功，否则修改失败
 
             this.$axios.get(this.url+"/alter",{params:{    

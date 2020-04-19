@@ -11,7 +11,7 @@
 				</span>
 			</div>
 			<div class="comment_inp">
-				<el-input @click="msg()" type="textarea" readonly :disabled="msgDiabled" placeholder="最少输入5个字符哦" :autosize="{minRows:1,maxRows:1}"></el-input>
+				<el-input @focus="showDialog()" type="textarea" readonly  placeholder="最少输入5个字符哦" :autosize="{minRows:1,maxRows:1}"></el-input>
 			</div>
 		</div>
 
@@ -105,8 +105,9 @@ export default{
 	},
 	methods: {
 		// 控制输入评论的框框是否显示
-		msg(){
-			this.commentArea=true
+		showDialog(){
+			this.commentArea=true;
+			console.log(111)
 		},
 
 		// 刚进入页面时获取关于此文章的所有评论,参数是文章的id

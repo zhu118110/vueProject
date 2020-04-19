@@ -33,7 +33,7 @@ export default{
 		
 			this.type=this.$route.query.type;
 			
-			this.$axios.get(this.url+"/type/"+this.type)
+			this.$axios.post(this.url+"/type/"+this.type)
 			.then(res=>{
 				if(res.data.length>0){
 					this.articles=res.data.reverse();
@@ -83,11 +83,9 @@ export default{
 		display:-webkit-box;
 		-webkit-box-orient:vertical;
 		-webkit-line-clamp:2;
-		padding:10px 15px;
-		white-space:pre-line;
-		min-height: 40px;
-		max-height: 65px;
-		line-height: 25px;
+		padding:10px 15px 0;
+		max-height: 30px;
+		/* line-height: 25px; */
 	}
 	/deep/ .article .content>p{
 		overflow:hidden;

@@ -16,7 +16,8 @@
             </el-form-item>
 
            <el-form-item label="内容">
-             <editor></editor>
+               <!-- 编辑器内容 -->
+                <editor ref="checkDatas"></editor>
 
             </el-form-item>
 
@@ -32,8 +33,7 @@
 </template>
 <script>
 import editor from '../../repeatModule/editor'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/xcode.css'
+
 export default {
     name:"check",
     data(){
@@ -51,18 +51,29 @@ export default {
         this.getRoutId();
     },
     methods: {
+        // 通过路由获取要查看的文章的id去数据库查找对应的文章
         getRoutId(){
            this.queryId=this.$route.query.id;   //通过路由获取要查看的文章的id
-            //  利用id去数据库查找  
+            //  利用id去数据库查找文章
            this.$axios.get(this.url+"/details",{params:{
                id:this.queryId
            }})
            .then(result=>{
-               this.form=result.data;
-               console.log(result)
+               if(result.data){
+                    this.form=result.data;
+                    // 通过调用子组件的方法向子组件编辑器传递数据内容，第一个参数是内容，第二个参数让编辑器禁用
+                    this.$refs.checkDatas.checkData(this.form.content,false);
+                    // console.log(result)
+               }
+                
+               
            })
            .catch(err=>{
-               console.log(err)
+                this.$message({
+                    message:err.message,
+                    type:"error",
+                    durations:1000,
+                })
            })
         },
         // 返回上一页
