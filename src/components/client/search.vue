@@ -74,11 +74,9 @@ export default {
 		display:-webkit-box;
 		-webkit-box-orient:vertical;
 		-webkit-line-clamp:2;
-		padding:10px 15px;
-		white-space:pre-line;
-		min-height: 40px;
-		max-height: 65px;
-		line-height: 25px;
+		padding:10px 15px 0;
+		max-height: 30px;
+		/* line-height: 25px; */
 	}
 	.article>.content p{
 		overflow:hidden;

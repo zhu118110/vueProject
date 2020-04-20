@@ -40,6 +40,7 @@ export default{
 		fenye,
 	},
 	methods:{
+		
 		// 获取所有的文章,在页面刚加载时请求数据库
 		look(){
 			this.$axios.get(this.url+"/look")

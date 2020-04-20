@@ -78,6 +78,7 @@ export default {
 			getReadNum(){
 				this.$axios.get(this.url+"/getReadNum")
 				.then(res=>{
+					// 判断是否获取到数据
 					if(res.data){
 						
 						for(let i in res.data){
@@ -93,9 +94,14 @@ export default {
 							this.classifys.opinionData=this.classifys.opinionData.concat(res.data[i]);
 						}
 						
-						// 调用饼图，参数是各个项的数据
+						// 调用饼图，参数是一个数组，包含各个分类名称和查看次数
 						this.readPie(this.classifys.opinionData)
 						
+					}else{
+						// 没有获取到数据
+						this.classifys.opinionData[0].name="vue";
+						this.classifys.opinionData[0].value="0";
+						this.readPie(this.classifys.opinionData);
 					}
 				})
 				.catch(err=>{

@@ -103,11 +103,14 @@ export default{
 		// 刚进入页面时获取关于此文章的所有评论
 		this.getComments();
 	},
+	
 	methods: {
+
+		
 		// 控制输入评论的框框是否显示
 		showDialog(){
 			this.commentArea=true;
-			console.log(111)
+			
 		},
 
 		// 刚进入页面时获取关于此文章的所有评论,参数是文章的id
