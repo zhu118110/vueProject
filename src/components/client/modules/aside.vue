@@ -2,7 +2,7 @@
         <div>
             <div class="seach">
                 <div>
-                    <input type="text" placeholder="输入标题关键字"  v-model="searchMsg" @blur="searchBlur()">
+                    <input type="text" placeholder="输入标题关键字"  v-model="searchMsg" v-on:keyup.enter="searchBtn()" @blur="searchBlur()">
                     <button @click="searchBtn()">搜索</button>
                 </div>
                 <ul v-show="search_keydown">
@@ -54,7 +54,7 @@ export default{
             searchMsg:"",
             searchResult:[],
             search_keydown:false,
-            liRef:false,
+            liRef:false,   //判断鼠标是否放在li上
             col:0,
         }
     },
@@ -120,42 +120,58 @@ export default{
           
         },
 
-        // 1.搜索框失去焦点后让搜索结果隐藏
+
+        // 1.搜索框失去焦点后判断鼠标是否点击了搜索结果，如果没有点击则让搜索的结果隐藏
         searchBlur(){
             // console.log(this.searchMsg,this.liRef)
-            // 如果搜索字段为空或者鼠标没有放在搜索列表(li)时,搜索列表隐藏,跳转至首页
-            if(this.searchMsg==""&&this.liRef==false){
+            // 如果搜索字段为空或者鼠标没有放在搜索列表(li)时,搜索列表隐藏
+            if(this.liRef==false){
                 this.search_keydown=false;
-                this.$router.push({
-                    path:"/index"
-                })
-               return false;
             }
         },
-        // 点击搜索里边中的单个搜索数据
+
+        // 点击 搜索出的结果列表里边的单个结果
+        // 功能：
+        //   如果点击的是li标签，根据点击的li的下标找到所点击的数据并且存到vuex中
+        //   搜索列表页隐藏
+        //   跳转到搜索结果页面
         selectLi(i){
-            // 如果鼠标放在搜索列表上时,根据点击的结果的下标存入vuex,
+            // 如果鼠标点击的是li
             if(this.$refs.liRef[0].tagName=="LI"){
-                this.liRef=true;
-                this.$store.dispatch("toGetSearch",this.searchResult[i]);
-                this.search_keydown=false;
+                this.liRef=true;    //
+                // 根据点击的下标找到搜索结果中的数据，并存到vuex中
+                this.$store.dispatch("toGetSearch",this.searchResult[i]);   
+                this.search_keydown=false;//搜索列表页隐藏
+                // 跳转到搜索结果页面
                 this.$router.push({
                     path:"/search"
                 })
 
             }
         },
-        // 鼠标滑动到搜索列表上
+        // 鼠标滑动到搜索列表上显示
         selectOver(){
-            this.liRef=true;
+            this.liRef=true;  //说明鼠标在li上
         },
-        // 鼠标离开搜索列表上
+        // 鼠标离开搜索列表上隐藏，
         selectOut(){
-            this.liRef=false
+            this.liRef=false;   //说明鼠标已经离开li
         },
+
+        // 点击搜索按钮 功能:
+        //     先判断搜索框中是否有内容;
+        //     把所有搜索结果存到vuex中
+        //     搜索列表隐藏，
+        //     跳转到搜索页，搜索页从vuex中拿到搜索的数据
         searchBtn(){
             if(this.searchMsg!==""){
+                if(this.searchMsg.trim().length==0){
+                    this.searchMsg="";
+                    return false
+                }
+                // 向vuex存储搜索的结果
                 this.$store.dispatch("toGetSearch",this.searchResult);
+            
                 this.search_keydown=false;
                 this.$router.push({
                     path:"/search"
@@ -167,22 +183,29 @@ export default{
         // 监听搜索框的值改变,根据改变的值找到标题包含这个值的内容
 
         "searchMsg":function(n,old){
-            if(n!==""){
-                this.$router.push({
-                    path:"/index"
+        //   判断是否输入值以及是否输入的全是空格
+            if(n!==""&&n.trim().length>0){
+                
+                // this.searchResult=[];
+                
+                this.searchResult=this.mydata.filter((item,index,arr)=>{
+                    // 返回的是标题包含的关键词的数据
+                    return arr[index].title.includes(this.searchMsg);
+                     
                 })
-                this.searchResult=[];
-                // 遍历所有文章的标题是否包含搜索框中输入的值
-                for(let i in this.mydata){
-                    if(this.mydata[i].title.indexOf(this.searchMsg) !== -1){
-                        this.searchResult.push(this.mydata[i]);
-                    }
+                if(this.searchResult.length<=0){
+                    this.search_keydown=false;
+                }else{
+                     this.search_keydown=true;
                 }
-                this.search_keydown=true;
             }else{
                 
                 this.searchResult=[];
                 this.search_keydown=false;
+                this.$router.push({
+                    path:"/index",
+
+                })
             }
         }
     }

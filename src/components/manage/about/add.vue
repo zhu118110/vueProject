@@ -13,7 +13,6 @@
 		<el-form label-width="80px" :rules="rules" :model="form" ref="form" class="demo-ruleForm">
 			<el-form-item label="标题" prop="title">
 				<el-input v-model="form.title" class="my_inp">
-
 				</el-input>
 			</el-form-item>
 			<el-form-item label="分类" prop="kind">
@@ -33,7 +32,7 @@
 					ps:另一种给子组件传值的方法是  如:child="data"
 				-->
 
-				<editor @editorData="getEditorData(arguments)" ref="clears" ></editor>	
+				<editor @editorData="getEditorData(arguments)" v-model="form.content" ref="clears" ></editor>	
 				
 			</el-form-item>
 
@@ -83,14 +82,7 @@ export default({
 	components: {
 		editor	
 	},
-	// directives: {
-	// 	"highlight":function(ele){
-	// 		let blocks = ele.querySelectorAll('pre code');
-	// 		blocks.forEach((block)=>{
-	// 			hljs.highlightBlock(block)
-	// 		})
-	// 	}	
-	// },
+	
 	mounted () {
 			
 	},
@@ -100,17 +92,15 @@ export default({
 			this.form.content=data[0];
 			
 		},
-	
-
 		
 		// 点击发表
 		onSure(form){
 			// 验证表单数据是否不为空, valid=true表示表单验证成功
+			
 			this.$refs[form].validate((valid) => {
 				if (valid){
 					if(this.form.content){
 						this.$axios.post(this.url+"/getAdd",QS.stringify({
-							// content:this.form.content,
 							content:this.form.content,
 							title:this.form.title,
 							kind:this.form.kind,
@@ -126,9 +116,7 @@ export default({
 									type:"success",
 									durations:1500,
 								})
-								
-								this.$refs[form].resetFields();   //清除父组件中所有输入框的内容
-								
+								this.$refs[form].resetFields();   //清除所有表单内容
 								// 给编辑器组件传递一个值让其清空内容；editorClear()是子组件的一个方法。
 								// 调用方法:
 								//     在父组件中先给引入的子组件添加一个ref属性,如clears，
@@ -153,6 +141,7 @@ export default({
 							})
 						})
 					} else {
+						// 验证不成功
 						return false;
 					}
 				}

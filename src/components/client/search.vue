@@ -31,15 +31,18 @@ export default {
         this.getSearchData()
     },
     methods: {
+		// 展示数据
         getSearchData(){
-            this.searchData=this.searchData.concat(this.$store.state.searchData);
-           
+			// 从vuex中拿到所有搜索数据
+			this.searchData=this.searchData.concat(this.$store.state.searchData);
+			// 判断搜索到的数据是否为空
             if(this.searchData.length<=0){
                 this.isShow=false
             }else{
                 this.isShow=true
             }
 		},
+		// 点击标题跳转到文章详情页，参数为文章id
 		getId(index){
 			this.$router.push({
 				path:"/detail",

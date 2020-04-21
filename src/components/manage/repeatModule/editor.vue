@@ -18,11 +18,7 @@ import 'highlight.js/styles/dark.css'
 
 export default{
     name:"editor",
-    props: {
-        // checkData:{
-        //     type:String,
-        // }
-    },
+    
     data(){
         return{
              // 编辑器配置
@@ -63,13 +59,13 @@ export default{
           
             this.editor.customConfig.uploadFileName = 'img' // 后端接受上传文件的参数名
             this.editor.customConfig.uploadImgMaxSize = 2 * 1024 * 1024 // 将图片大小限制为 2M
-            this.editor.customConfig.uploadImgMaxLength =3 // 限制一次最多上传 3 张图片
+            this.editor.customConfig.uploadImgMaxLength = 3 // 限制一次最多上传 3 张图片
             this.editor.customConfig.uploadImgTimeout = 3 * 60 * 1000 // 设置超时时间
             
             this.editor.customConfig.pasteTextHandle = function (content) {
                 // content 即粘贴过来的内容（html 或 纯文本），可进行自定义处理然后返回
-                console.log(content)
-                return content + '<p>在粘贴内容后面追加一行</p>'
+              
+                return content 
             }
            
              // 配置编辑器工具栏要显示的功能
@@ -86,12 +82,10 @@ export default{
                 'foreColor', // 文字颜色
                 'backColor', // 背景颜色
                 'link', // 插入链接
-                
-                
                 'emoticon', // 表情
                 'image', // 插入图片
                 // 'code', // 插入代码
-                'undo', // 撤销
+                
 			],
 			// 插入图片的各个阶段事件
             this.editor.customConfig.uploadImgHooks = {
@@ -112,7 +106,7 @@ export default{
               // 插入图片成功回调
 				success: (xhr, editor, result) => {
 					
-					console.log(result)
+					console.log("图片插入成功")
        
 				},
 				timeout: (xhr, editor) => {
@@ -126,15 +120,18 @@ export default{
                     
 					//result为上传图片成功的时候返回的数据，这里我打印了一下发现后台返回的是data：[{url:"路径的形式"},...]
 					//insertImg()为插入图片的函数
-					var url=result.data[0];  //获取到后段返回的图片路径
+                    var url=result.data[0];  //获取到后段返回的图片路径
+                    url=url.substring(6);   //将public截取掉
 					insertImg(this.url+url);
 				}
 			}
 			
         // 内容改变触发
 			this.editor.customConfig.onchange = (html) => {
+                
                 // html就是编辑的内容
-                this.content=html;
+                this.content=html.trim();
+                
                 // this.editor.txt.html();这个方法是渲染数据内容
                 this.editor.txt.html(this.content);
 
