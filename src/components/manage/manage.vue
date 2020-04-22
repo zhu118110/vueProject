@@ -82,7 +82,12 @@ export default{
 </script>
 
 <style scoped="scoped">
-	
+	.aside{
+		width: 13% !important;
+	}
+	.aside>ul{
+		height: 100%;
+	}
 	.header{
 		display: flex;
 		justify-content: space-around;

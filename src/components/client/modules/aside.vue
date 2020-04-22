@@ -203,8 +203,7 @@ export default{
                 this.searchResult=[];
                 this.search_keydown=false;
                 this.$router.push({
-                    path:"/index",
-
+                    path:"/articles",
                 })
             }
         }

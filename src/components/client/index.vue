@@ -106,7 +106,7 @@ export default{
 			// 点击首页跳转到首页,不去后台获取数据
 			if(ele=="/"){
 				this.$router.push({
-					path:"/index"
+					path:"/articles"
 				})
 				return;
 			}

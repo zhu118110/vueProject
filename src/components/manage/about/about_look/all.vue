@@ -162,7 +162,8 @@ export default{
 						id:id
 					}})
 					.then(res=>{
-						if(res.data=='1'){   //判断服务端返回的判断码
+						console.log(res.data)
+						if(res.data=='1'){   //判断服务端返回的判断码  1代表返回成功
 							let that=this;
 							setTimeout(function(){
 								that.loading=false;
@@ -194,7 +195,7 @@ export default{
 							durations:1500,
 						})
 					})
-				}  //if
+				} 
 			})
 			.catch((e)=>{
 

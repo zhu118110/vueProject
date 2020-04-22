@@ -30,6 +30,7 @@ export default{
 		this.getArticle()
 	},
 	methods: {
+		// 得到文章
 		getArticle(){
 			this.type=this.$route.query.type;
 			this.$axios.post(this.url+"/type/"+this.type)
