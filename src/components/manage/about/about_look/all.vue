@@ -11,8 +11,8 @@
 -->
 <template>
 <div>
-					<!-- 分页功能重要的一句话 -->
-	<el-table :data="article.slice( (currentPage-1)*pageSize,pageSize*currentPage)" border height="600">   
+					<!-- 分页功能重要的一句话  .slice( (currentPage-1)*pageSize,pageSize*currentPage)-->
+	<el-table :data="article" border height="600">   
 		<el-table-column
 			prop="date"
 			label="发布日期"
@@ -59,7 +59,7 @@
 	</el-table>
 
 
-	<fenye @fenyeData="pageData(arguments)" :totle="article.length" :defaultPageSize="pageSize"></fenye>
+	<fenye @fenyeData="pageData(arguments)" :server="flurl" :totle="row" :defaultPageSize="pageSize"></fenye>
 	
 </div>
 </template>
@@ -72,6 +72,9 @@ export default{
 		return{
 			currentPage:1,
 			pageSize:10,
+			row:1,    //文章总条数
+			totlePages:1,    //总页数
+			flurl:"http://127.0.0.1:3000/article",
 			url:"http://127.0.0.1:3000",
 			article:[],
 			// 要过滤的数据
@@ -103,8 +106,9 @@ export default{
 	},
 	methods:{
 		pageData(pages){
-			this.pageSize=pages[0];
-			this.currentPage=pages[1];
+			this.article=[]
+
+			this.article=pages[0];
 		},
 
 		// 过滤事件
@@ -116,13 +120,29 @@ export default{
 
 		// 获取所有的文章
 		all(){
-			this.$axios.get(this.url+"/look")   //请求后台
+			this.$axios.get(`${this.flurl}/${this.currentPage}/${this.pageSize}`)
 			.then(res=>{
-				this.article=res.data;
+				if(res.data.data!==0){
+					// 获取展示的数据
+					this.article=res.data.data;
+					this.totlePages=res.data.totlePages;
+					this.row=res.data.row;
+				}else{
+					this.$message({
+						message:"暂无数据",
+						type:"success",
+						durations:1000,
+					})
+					
+				}
 				
 			})
 			.catch(err=>{
-				console.log(err)
+				this.$message({
+					message:err.message,
+					type:"error",
+					durations:1000,
+				})
 			})
 		},
 
@@ -162,7 +182,7 @@ export default{
 						id:id
 					}})
 					.then(res=>{
-						console.log(res.data)
+						
 						if(res.data=='1'){   //判断服务端返回的判断码  1代表返回成功
 							let that=this;
 							setTimeout(function(){

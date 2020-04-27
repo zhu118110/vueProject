@@ -61,7 +61,7 @@
 
 		<!-- 底部分页 -->
 		<div class="deleteArea">
-			<fenye class="my_fenye" @fenyeData="pageData(arguments)" :totle="article.length" :defaultPageSize="pageSize"></fenye>
+			<fenye class="my_fenye" @fenyeData="pageData(arguments)" :server="fyurl" :totle="row" :defaultPageSize="pageSize"></fenye>
 		</div>
     </div>
 </template>
@@ -97,7 +97,9 @@ export default{
 			// 分页
 			currentPage:1,
 			pageSize:10,
-			
+			row:1,    //文章总条数
+			totlePages:1,    //总页数
+			fyurl:"http://127.0.0.1:3000/replyPl",
 			// 关于点击回复
         }
     },
@@ -111,8 +113,15 @@ export default{
 	methods: {
 		// 子组件传递的数据,设置分页
 		pageData(pages){
-			this.pageSize=pages[0];
-			this.currentPage=pages[1];
+			this.article=[];
+			this.article=pages[0];
+			this.article.forEach((val,i,arr)=>{
+				if(val.reply==false){
+					val.reply="未回复"
+				}else{
+					val.reply="已回复"
+				}
+			})
 		},
 		// 文章分类过滤事件
 		filterTag(val,row){
@@ -123,18 +132,20 @@ export default{
 		
 		// 获取到回复过的评论
 		getReplyPl(){
-			this.$axios.get(this.url+"/replyPl")
+			this.$axios.get(`${this.url}/replyPl/${this.currentPage}/${this.pageSize}`)
 			.then(res=>{
-				if(res.data!==0){
+				if(res.data.data!==0){
+					this.article=res.data.data;
 					
-					this.article=res.data;
-					for(let i in this.article){
-						if(this.article[i].reply==false){
-							this.article[i].reply="未回复"
+					this.article.forEach((val,i,arr)=>{
+						if(val.reply==false){
+							val.reply="未回复"
 						}else{
-							this.article[i].reply="已回复"
+							val.reply="已回复"
 						}
-					}
+					})
+					this.row=res.data.row;  //文章总条数
+					this.totlePages=res.data.totlePages;   //总页数
 				}else{
 					this.article=[];
 					return;

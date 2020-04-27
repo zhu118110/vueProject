@@ -14,7 +14,7 @@
   </body>
   <script>
     // 监听页面copy事件
-   
+    //  ie是流氓，咱们不理它.jpg
 		function copy(){
 			      var body_element = document.body;
             var selection;
@@ -25,11 +25,12 @@
             // console.log(selection);  //输出类型是对象类型;
            // console.log(selection+"");  只输出已复制的文本内容
         
-            // 自定义粘贴后要显示的内容    
-            var appendLink=`
+            // 自定义粘贴后要显示的内容（ie下不会显示)
+            var appendLink="";
+            appendLink=`
                     <br/>-----------------粘贴分割线----------------------------
                     <br/>原文出自[ 我的个人博客 ]--github地址：https://github.com/zhu118110/vueProject.git"
-            `;
+            `
 
             // 剪贴板对象 window.clipboardData   三个访问方法
                     // 1.clearData(sDataFormat) 删除剪贴板中指定格式的数据。
@@ -39,7 +40,7 @@
 
             if (window.clipboardData) { // 只能在Internet Explorer用
                 var copytext = selection + appendLink;
-                alert(copytext)
+                 
                 window.clipboardData.setData ("Text", copytext);
                 return false;
             }else{
@@ -60,7 +61,7 @@
                 },0);
             }
        }
-       document.oncopy=copy
+       document.oncopy=copy;
 
 
   </script>

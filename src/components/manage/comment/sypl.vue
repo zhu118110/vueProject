@@ -95,7 +95,7 @@
 			<el-button @click="del(isSel)" :disabled="!isDel" class="my_button" type="primary" size="mini" icon="el-icon-delete">
 				删除
 			</el-button>
-			<fenye class="my_fenye" @fenyeData="pageData(arguments)" :totle="article.length" :defaultPageSize="pageSize"></fenye>
+			<fenye class="my_fenye" @fenyeData="pageData(arguments)" :server="fyurl" :totle="row" :defaultPageSize="pageSize"></fenye>
 		</div>
 		
 		
@@ -133,11 +133,13 @@ export default{
 			isSel:[],  //点击全选选中的数据
 			isDel:false,  //是否显示删除按钮
 			rowStyleId:[],
-			 
+			
 			// 分页
 			currentPage:1,
-			pageSize:10,
-
+			pageSize:8,
+			row:1,    //文章总条数
+			totlePages:1,    //总页数
+			fyurl:"http://127.0.0.1:3000/getpl",
 			// 点击回复
 			aboutReply:{
 				commentArea:false,    //是否显示回复框
@@ -163,8 +165,15 @@ export default{
 
 		// 子组件传递的数据,设置分页
 		pageData(pages){
-			this.pageSize=pages[0];
-			this.currentPage=pages[1];
+			this.article=[];
+			this.article=pages[0];
+			this.article.forEach((val,i,arr)=>{
+				if(val.reply==false){
+					val.reply="未回复"
+				}else{
+					val.reply="已回复"
+				}
+			})
 		},
 		// 文章分类过滤事件
 		filterTag(val,row){
@@ -175,17 +184,24 @@ export default{
 		
 		// 获取到所有的评论
 		getpl(){
-			this.$axios.get(this.url+"/getpl")
+			this.$axios.get(`${this.url}/getpl/${this.currentPage}/${this.pageSize}`)
 			.then(res=>{
-				this.article=res.data;
-				for(let i in this.article){
+				if(res.data.data!==0){
+					this.article=res.data.data;
+					this.article.forEach((val,i,arr)=>{
+						if(val.reply==false){
+							val.reply="未回复"
+						}else{
+							val.reply="已回复"
+						}
+					})
 					
-					if(this.article[i].reply==false){
-						this.article[i].reply="未回复"
-					}else{
-						this.article[i].reply="已回复"
-					}
+				
+					this.row=res.data.row;  //文章总条数
+					this.totlePages=res.data.totlePages;   //总页数
+
 				}
+				
 			})
 			.catch(err=>{
 				

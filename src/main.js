@@ -7,6 +7,8 @@ import axios from 'axios'
 // 引入状态管理
 import store from "./store/store"
 
+import "babel-polyfill"
+
 import QS from "qs"
 import './assets/style.css'   //全局样式
 import './assets/font.css'   //字体图标
@@ -16,11 +18,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
 
-
-
-
 import Router from 'vue-router'
- 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location, onResolve, onReject) {
   if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
@@ -76,12 +74,6 @@ Vue.prototype.getCookie=function(cname){
     return "";
 }
 
-Vue.directive('highlight',function (el) {
-  let blocks = el.querySelectorAll('pre code');
-  blocks.forEach((block)=>{
-    hljs.highlightBlock(block)
-  })
-})
 
 /* eslint-disable no-new */
 new Vue({

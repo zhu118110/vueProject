@@ -5,7 +5,8 @@
 			暂无文章！
 		</div>
 	<!-- .slice( (currentPage-1)*pageSize,pageSize*currentPage ) -->
-		<div v-else class="article" v-for="(article,index) in articles.slice( (currentPage-1)*pageSize,pageSize*currentPage )" :key="index">
+
+		<div v-else class="article" v-for="(article,index) in articles" :key="index">
 			<h3 @click="getId(index)">{{article.title}}</h3>
 			<div class="content" v-html="article.content">{{article.content}}</div>
 			<div class="time">
@@ -15,7 +16,7 @@
 			</div>
 		</div>
 		
-		<fenye class="fenye" :totle="articles.length" :defaultPageSize="pageSize" @fenyeData="pagesData(arguments) "></fenye>
+		<fenye class="fenye" :server="url" :totle="row" :defaultPageSize="pageSize" @fenyeData="pagesData(arguments) "></fenye>
 	</div>
 </template>
 <script>
@@ -25,15 +26,18 @@ export default{
 	
 	data(){
 		return{
-			pageSize:7,
-			currentPage:1,
+			
 			articles:[],
-			url:"http://127.0.0.1:3000",
-			isShow:false
+			url:"http://127.0.0.1:3000/article",
+			isShow:false,
+			row:1,    //文章总条数
+			totlePages:1,    //总页数
+			currentPage:1,    //当前页数
+			pageSize:10    //每页显示的数据
 		}
 	},
 	created() {
-		this.look();
+		this.getArticles();
 		
 	},
 	components: {
@@ -41,22 +45,39 @@ export default{
 	},
 	methods:{
 		
-		// 获取所有的文章,在页面刚加载时请求数据库
-		look(){
-			this.$axios.get(this.url+"/look")
-			.then(res=>{
-				if(res.data.length>0){
-					this.articles=res.data.reverse();
-					this.isShow=true;
-					// console.log(this.articles)
-				}else{
-					this.isShow=false;
-				}
-			})
-			.catch(err=>{
-				console.log(err);
-			})
+			// 获取所有的文章,在页面刚加载时请求数据库
+			//  @this.currentPage   当前是第几页  比如默认在第一页
+			//  @this.pageSize      当前页面展示多少条数据  比如默认10条
+		getArticles(){
+			
+			this.$axios.get(`${this.url}/${this.currentPage}/${this.pageSize}`)
+				.then(res=>{
+					if(res.data!==0){
+						// 获取展示的数据
+						this.articles=res.data.data;
+						this.totlePages=res.data.totlePages;
+						this.row=res.data.row;
+						
+						this.isShow=true;
+					}else{
+						this.$message({
+							message:"暂无数据",
+							type:"success",
+							durations:1000,
+						})
+						this.isShow=false;
+					}
+					
+				})
+				.catch(err=>{
+					this.$message({
+						message:err.message,
+						type:"error",
+						durations:1000,
+					})
+				})
 		},
+		
 		// 点击文章标题跳转至文章详情页,路由传递的参数是文章的id
 		getId(index){
 			this.$router.push({
@@ -68,9 +89,11 @@ export default{
 		},
 
 		// 从子组件获取数据
-		pagesData(pages){
-			this.pageSize=pages[0];
-			this.currentPage=pages[1];
+		pagesData(data){
+			this.articles=[]
+
+			this.articles=data[0];
+			
 		}
 	}
 }

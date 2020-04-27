@@ -7,7 +7,7 @@
 			<div class="comment_title">
 				<h4>发表评论</h4>
 				<span>
-					已有{{cmnts.length}}条评论
+					已有{{row}}条评论
 				</span>
 			</div>
 			<div class="comment_inp">
@@ -47,7 +47,7 @@
 			{{noComment}}
 		</div>
 		<!-- 评论 -->
-		<div class="talk" v-for="cmt in cmnts.slice( (currentPage-1)*pageSize,pageSize*currentPage )">
+		<div class="talk" v-for="cmt in cmnts">
 			
 			<header>
 				<div class="talk_img">
@@ -63,7 +63,7 @@
 			</div>
 			
 		</div>
-		<fenye class="fenye" :totle="cmnts.length" :defaultPageSize="pageSize" @fenyeData="pagesData(arguments)"></fenye>
+		<fenye class="fenye" :server="fyurl+'/'+id" :totle="row" :defaultPageSize="pageSize" @fenyeData="pagesData(arguments)"></fenye>
 	</div>
 </template>
 
@@ -75,6 +75,10 @@ export default{
 		return{
 			pageSize:5,
 			currentPage:1,
+			row:1,    //文章总条数
+			totlePages:1,    //总页数
+			fyurl:"http://127.0.0.1:3000/comments",
+			
 			noComment:"暂无相关评论",
 			id:'',   //文章id，通过路由传递过来
 			url:"http://127.0.0.1:3000",    //后台网址
@@ -116,20 +120,17 @@ export default{
 		// 刚进入页面时获取关于此文章的所有评论,参数是文章的id
 		getComments(){
 			this.cmnts=[],
-			this.$axios.get(this.url+"/comments",{params:{
-				titleId:this.id,
-
-			}})
+			this.$axios.get(`${this.fyurl}/${this.id}/${this.currentPage}/${this.pageSize}`)
 			.then(res=>{
-				// 遍历后端返回的数据,只找出允许显示的评论
-				for( let i in res.data ){
-					if( res.data[i].isShow==true ){
-						this.cmnts.push(res.data[i]);
-					}
-					// console.log(this.cmnts)
-				}
 				
-				if(this.cmnts.length>0){
+				// 判断是否有评论数据
+				if(res.data.data!==0){
+						// 遍历后端返回的数据,只找出允许显示的评论
+					this.cmnts=res.data.data.map((val,i,arr)=>{
+						return val
+					})
+					this.row=res.data.row;  //获取评论总条数
+					this.totlePages=res.data.totlePages   // 评论总页数
 					this.isCmnts=true;
 				}else{
 					this.isCmnts=false;
@@ -168,23 +169,31 @@ export default{
 
 		// 点击提交评论
 		talk(form){
-			
 			this.commentArea=false;
 			this.$refs[form].validate(val=>{
 				//  判断验证规则收否通过以及评论内容不是全部为空格
 				if(val&&this.form.text.trim().length>0){
-					let that=this;
-				// 并发请求
-					that.$axios.all([this.tjpl(),this.hqpl()])
-					.then(that.$axios.spread(function(tj,hq){
-						if(hq.data){
-							//获取到所有评论
-							that.cmnts=hq.data;
-							that.isCmnts=true;
+					
+					this.$axios.get(this.url+"/pl",{params:{
+						titleId:this.id,   //文章id
+						title:this.articles[0].title,   //文章标题
+						writer:this.articles[0].writer,  //文章作者
+						time:this.dateStr(),   //评论的时间
+						content:this.form.text,  //评论的内容
+						kind:this.articles[0].kind
+					}})
+					.then(res=>{
+					
+						if(res.data==1){
+							this.isCmnts=true;
 							// 清空文本框
-							that.$refs[form].resetFields()
+							this.$refs[form].resetFields();
+							this.getComments();
 						}
-					}))
+					})
+					.catch(err=>{
+						console.log(err)
+					})
 				}else{
 					this.$message({
 						message:"请输入有效评论",
@@ -195,24 +204,10 @@ export default{
 			})
 		},
 		
-		// 提交评论的参数
-		tjpl(){
-			return this.$axios.get(this.url+"/pl",{params:{
-				titleId:this.id,   //文章id
-				title:this.articles[0].title,   //文章标题
-				writer:this.articles[0].writer,  //文章作者
-				time:this.dateStr(),   //评论的时间
-				content:this.form.text,  //评论的内容
-				kind:this.articles[0].kind
-			}})
-		},
+		
 
 		// 添加评论后直接获取;
-		hqpl(){
-			return this.$axios.get(this.url+"/comments",{params:{
-				titleId:this.id
-			}})
-		},
+		
 
 		// 点击重置按钮清空内容
 		reset(form){
@@ -220,9 +215,11 @@ export default{
 		},
 
 		// 从子组件获取数据
-		pagesData(pages){
-			this.pageSize=pages[0];
-			this.currentPage=pages[1];
+		pagesData(data){
+			
+			this.cmnts=[]
+
+			this.cmnts=data[0];
 		}
 	},
 
