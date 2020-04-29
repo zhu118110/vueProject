@@ -105,6 +105,7 @@
 <script>
 import fenye from '../../client/modules/fenye.vue'
 import articleVue from '../../client/article.vue'
+import QS from "qs"
 import { type } from 'os'
 export default{
     name:"allDiscuss",
@@ -186,7 +187,7 @@ export default{
 		getpl(){
 			this.$axios.get(`${this.url}/getpl/${this.currentPage}/${this.pageSize}`)
 			.then(res=>{
-				if(res.data.data!==0){
+				if(res.data.data!=="error"){
 					this.article=res.data.data;
 					this.article.forEach((val,i,arr)=>{
 						if(val.reply==false){
@@ -230,15 +231,18 @@ export default{
 		del(arr){
 			
 			let idArr=[];  //存放数据的_id
-			let that=this;
+			// let that=this;
 			for( let i in arr){
 				idArr.push(arr[i]._id);  //获取选中的评论的id
 			};
-			// 并发请求
-			that.$axios.all([that.tjPL(idArr),that.schf(idArr)])
-			.then(that.$axios.spread(function(pl,hf){
-				if(pl.data==1&&hf.data!==""){
-					
+			
+			this.$axios.post(this.url+"/delpl",QS.stringify({
+				idArr:JSON.stringify(idArr)
+			}))
+			.then(res=>{
+				
+				if(res.data.statu="success"){
+					var that=this;
 					that.$message({
 						message:"删除成功",
 						type:"success",
@@ -249,13 +253,13 @@ export default{
 					})
 					
 				}else{
-					that.$message({
+					this.$message({
 						message:"删除失败",
 						type:"success",
 						durations:1000,
 					})
 				}
-			}))
+			})
 			.catch(err=>{
 				this.$message({
 					message:"未知错误"+err,
@@ -265,19 +269,7 @@ export default{
 			})
 			
 		},
-		// 删除选中的评论
-		tjPL(idArr){
-			return this.$axios.get(this.url+"/delpl",{params:{
-				idArr:idArr
-			}})
-		},
-		// 删除评论的同时将对应的回复也删除
-		schf(idArr){
-			
-			return this.$axios.get(this.url+"/delhf",{params:{
-				idArr:idArr
-			}})
-		},
+		
 
 		// 点击回复评论
 		reply(obj){
@@ -286,6 +278,7 @@ export default{
 			this.aboutReply.commentArea=true;  //对话框显示
 			this.aboutReply.commentTtile=this.aboutReply.replyObj.title;   //评论的标题
 			this.aboutReply.commentPlaceHolder=this.aboutReply.replyObj.content   //评论的内容
+			
 		},
 	
 		// 确定回复
@@ -293,25 +286,30 @@ export default{
 			// 如果回复内容不为空或者显示状态发生改变 发起请求,
 			//   后端返回1时回复成功
 		
-			if(this.aboutReply.replyMsg!==""){
-				
-				this.$axios.get( this.url+"/getReply",{ 
-					// 请求参数为
-						// titleId   标题id
-						// dateStr   回复时间
+			if(this.aboutReply.replyMsg!==""||this.aboutReply.replyMsg.trim().length>0){
+				// 请求参数为
+						// content   评论的内容
+						// cmtDate   评论的时间
+						// titleId   评论的标题id,
 						// commentId 评论id、
+						// replyDate   回复时间
+						
 						// writer    作者、
 						// replyMsg  回复的内容
-					params:{
-						titleId:this.aboutReply.replyObj.titleId,   
-						dateStr:this.dateStr(),
+				this.$axios.post( this.url+"/getReply",QS.stringify({
+						isReply:this.aboutReply.replyObj.isReply,
+						cmtContent:this.aboutReply.replyObj.content,
+						cmtDate:this.aboutReply.replyObj.timeStr,
+						title:this.aboutReply.replyObj.title,
+						titleId:this.aboutReply.replyObj.titleId,
 						commentId:this.aboutReply.replyObj._id,
+						replyDate:this.dateStr(),
 						writer:this.aboutReply.replyObj.writer,
 						replyMsg:this.aboutReply.replyMsg,
-					}
-				})
+						kind:this.aboutReply.replyObj.kind
+				}))
 				.then(res=>{
-					if(res.data==1){
+					if(res.data.statu=="success"){
 						this.aboutReply.sure=true;   //禁用 '确定''重置' 按钮
 						var that=this;
 						that.$message({
@@ -327,7 +325,7 @@ export default{
 					}
 				})
 				.catch(err=>{
-
+					
 				})
 			}
 		

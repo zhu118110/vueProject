@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading.fullscreen.lock="loading">
 		
 		<!-- 
 			@  data:要显示的数据
@@ -8,7 +8,7 @@
 		 -->
         <el-table :data="article" ref="multipleTable" border height="600" >
 			<el-table-column
-				prop="timeStr"
+				prop="cmtDate"
 				label="评论日期"
 				sortable
 				>
@@ -24,7 +24,7 @@
 				>
 			</el-table-column>
 			<el-table-column
-				prop="content"
+				prop="cmtContent"
 				label="评论内容"
 				>
 			</el-table-column>
@@ -34,7 +34,7 @@
 			>
 			</el-table-column>
 			<el-table-column
-				prop="replyMsg"
+				prop="replyContent"
 				label="回复的内容"
 			>
 			</el-table-column>
@@ -101,6 +101,8 @@ export default{
 			totlePages:1,    //总页数
 			fyurl:"http://127.0.0.1:3000/replyPl",
 			// 关于点击回复
+
+			loading:false
         }
     },
 	created () {
@@ -132,32 +134,38 @@ export default{
 		
 		// 获取到回复过的评论
 		getReplyPl(){
-			this.$axios.get(`${this.url}/replyPl/${this.currentPage}/${this.pageSize}`)
-			.then(res=>{
-				if(res.data.data!==0){
-					this.article=res.data.data;
+			this.loading=true;
+			var that=this;
+			setTimeout(function(){
+				that.$axios.get(`${that.url}/replyPl/${that.currentPage}/${that.pageSize}`)
+				.then(res=>{
 					
-					this.article.forEach((val,i,arr)=>{
-						if(val.reply==false){
-							val.reply="未回复"
-						}else{
-							val.reply="已回复"
-						}
-					})
-					this.row=res.data.row;  //文章总条数
-					this.totlePages=res.data.totlePages;   //总页数
-				}else{
-					this.article=[];
-					return;
-				}
-			})
-			.catch(err=>{
-				this.$message({
-					message:"获取所有评论失败,稍后再试",
-					type:"error",
-					durations:1000,
+					if(res.data.statu=="success"){
+						that.loading = false
+						that.article=res.data.data;
+						that.article.forEach((val,i,arr)=>{
+							if(val.reply==false){
+								val.reply="未回复"
+							}else{
+								val.reply="已回复"
+							}
+						})
+						that.row=res.data.row;  //文章总条数
+						that.totlePages=res.data.totlePages;   //总页数
+					}else{
+						that.loading = false
+						that.article=[];
+					}
 				})
-			})
+				.catch(err=>{
+					that.loading = false
+					that.$message({
+						message:"获取所有评论失败,稍后再试"+err,
+						type:"error",
+						durations:1000,
+					})
+				})
+			},1000)
 		},
 	},
 	

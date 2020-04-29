@@ -86,6 +86,7 @@
 import fenye from '../../client/modules/fenye.vue'
 import articleVue from '../../client/article.vue'
 import { type } from 'os'
+import QS from "qs"
 export default{
     name:"noReply",
     data(){
@@ -162,7 +163,8 @@ export default{
 			
 			this.$axios.get(`${this.url}/noReply/${this.currentPage}/${this.pageSize}`)
 			.then(res=>{
-				if(res.data.data!==0){
+				console.log(res.data)
+				if(res.data.statu=="success"){
 					this.article=res.data.data;
 					
 					this.article.forEach((val,i,arr)=>{
@@ -198,51 +200,49 @@ export default{
 			// 如果回复内容不为空或者显示状态发生改变 发起请求,
 			//   后端返回1时回复成功
 		
-			if(this.aboutReply.replyMsg!==""){
-				
-				this.$axios.get( this.url+"/getReply",{ 
-					// 请求参数为
-						// titleId   标题id
-						// dateStr   回复时间
+			if(this.aboutReply.replyMsg!==""||this.aboutReply.replyMsg.trim().length>0){
+				// 请求参数为
+						// content   评论的内容
+						// cmtDate   评论的时间
+						// titleId   评论的标题id,
 						// commentId 评论id、
+						// replyDate   回复时间
+						
 						// writer    作者、
 						// replyMsg  回复的内容
-					params:{
-						
-						titleId:this.aboutReply.replyObj.titleId,   
-						dateStr:this.dateStr(),
+				this.$axios.post( this.url+"/getReply",QS.stringify({
+						isReply:true,
+						cmtContent:this.aboutReply.replyObj.content,
+						cmtDate:this.aboutReply.replyObj.timeStr,
+						title:this.aboutReply.replyObj.title,
+						titleId:this.aboutReply.replyObj.titleId,
 						commentId:this.aboutReply.replyObj._id,
+						replyDate:this.dateStr(),
 						writer:this.aboutReply.replyObj.writer,
 						replyMsg:this.aboutReply.replyMsg,
-					}
-				})
+						kind:this.aboutReply.replyObj.kind
+				}))
 				.then(res=>{
-					
-					if(res.data==1){
-						this.aboutReply.sure=true;   //禁用 '确定' 按钮
+					if(res.data.statu=="success"){
+						this.aboutReply.sure=true;   //禁用 '确定''重置' 按钮
 						var that=this;
-						this.getpl();
 						that.$message({
 							message:"回复成功",
-							durations:500,
+							durations:100,
 							type:"success",
 							onClose:function(){
+								
 								that.aboutReply.commentArea=false;
+								that.getpl();
 							},
 						})
 					}
 				})
 				.catch(err=>{
-					that.$message({
-						message:"服务器错误",
-						durations:500,
-						type:"error",
-						onClose:function(){
-							that.aboutReply.commentArea=false;
-						},
-					})
+					
 				})
 			}
+		
 		},
 
         

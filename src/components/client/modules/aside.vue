@@ -67,6 +67,7 @@ export default{
         hot(){
 			this.$axios.get(this.url+"/look")
 			.then(res=>{
+              
                 if(res.data.length>0){
                     this.mydata=res.data;
                     

@@ -88,7 +88,7 @@ export default{
 			})
 		},
 
-		// 从子组件获取数据
+		// 从分页组件获取切换页数的数据
 		pagesData(data){
 			this.articles=[]
 
